@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import LogOutButton from './components/LogOutButton'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
-import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -22,51 +23,26 @@ const App = () => {
     }
   }, [])
 
-  // SUBMIT LOGIN
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    try {
-      const userReturned = await loginService({username, password})
-      console.log('usuario retornado: ', userReturned)
-      window.localStorage.setItem('loggedUser', JSON.stringify(userReturned))
-      setUser(userReturned)
-      setUsername('')
-      setPassword('')
-    } catch (error) {
-      console.log({error: 'Usuario Incorrecto'})
-    }
-  }
- 
-
   return (
     <>
       {
         user === null
           ? <>
               <h2>log in to application</h2>
-              <form onSubmit={handleSubmit}>
-                <div>
-                  <input
-                    type='text'
-                    name='Username'
-                    value={username}
-                    onChange={({target})=>{setUsername(target.value)}}
-                  />
-                </div>
-                <div>
-                  <input
-                    type='password'
-                    name='Password'
-                    value={password}
-                    onChange={({target})=>{setPassword(target.value)}}
-                  />
-                </div>
-                <button type='submit'>login</button>
-              </form>
+              <LoginForm 
+                // handleSubmit={handleSubmit}
+                username={username}
+                setUsername={setUsername}
+                password={password}
+                setPassword={setPassword}
+                setUser={setUser}
+              />
             </>
           : <div>
               <h2>blogs</h2>
               <p>{user.username} logged in <LogOutButton setUser={setUser}/></p>
+              <BlogForm/>
+
               {blogs.map(blog =>
                 <Blog key={blog._id} blog={blog} />
               )}
