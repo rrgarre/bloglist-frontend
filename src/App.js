@@ -8,8 +8,6 @@ import blogService from './services/blogs'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -20,6 +18,7 @@ const App = () => {
     if(window.localStorage.loggedUser){
       const loggedUser = JSON.parse(window.localStorage.loggedUser)
       setUser(loggedUser)
+      blogService.setNewToken(loggedUser.token)
     }
   }, [])
 
@@ -30,18 +29,13 @@ const App = () => {
           ? <>
               <h2>log in to application</h2>
               <LoginForm 
-                // handleSubmit={handleSubmit}
-                username={username}
-                setUsername={setUsername}
-                password={password}
-                setPassword={setPassword}
                 setUser={setUser}
               />
             </>
           : <div>
               <h2>blogs</h2>
               <p>{user.username} logged in <LogOutButton setUser={setUser}/></p>
-              <BlogForm/>
+              <BlogForm blogs={blogs} setBlogs={setBlogs}/>
 
               {blogs.map(blog =>
                 <Blog key={blog._id} blog={blog} />
@@ -50,7 +44,6 @@ const App = () => {
       }
     </>    
   )
-  
 }
 
 export default App

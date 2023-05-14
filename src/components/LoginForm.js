@@ -1,24 +1,31 @@
+import { useState } from 'react'
 import loginService from '../services/login'
+import blogService from '../services/blogs'
 
-const handleSubmitt = async (username, setUsername, password, setPassword, setUser) => {
-  try {
-    const userReturned = await loginService({username, password})
-    console.log('usuario retornado: ', userReturned)
-    window.localStorage.setItem('loggedUser', JSON.stringify(userReturned))
-    setUser(userReturned)
-    setUsername('')
-    setPassword('')
-  } catch (error) {
-    console.log({error: 'Usuario Incorrecto'})
+
+const LoginForm = ({setUser}) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleSubmitt = async (setUser) => {
+    try {
+      const userReturned = await loginService({username, password})
+      console.log('usuario retornado: ', userReturned)
+      window.localStorage.setItem('loggedUser', JSON.stringify(userReturned))
+      setUser(userReturned)
+      blogService.setNewToken(userReturned.token)
+      setUsername('')
+      setPassword('')
+    } catch (error) {
+      console.log({error: 'Usuario Incorrecto'})
+    }
   }
-}
 
-const LoginForm = ({username, setUsername, password, setPassword, setUser}) => {
+
   return(
-    // <form onSubmit={handleSubmitt}>
     <form onSubmit={(event)=>{
       event.preventDefault()
-      handleSubmitt(username, setUsername, password, setPassword, setUser)
+      handleSubmitt(setUser)
     }}>
       <div>
         <input
