@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import LogOutButton from './components/LogOutButton'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -14,21 +15,28 @@ const App = () => {
       setBlogs( blogs )
     )  
   }, [])
+  useEffect(()=>{
+    if(window.localStorage.loggedUser){
+      const loggedUser = JSON.parse(window.localStorage.loggedUser)
+      setUser(loggedUser)
+    }
+  }, [])
 
-
+  // SUBMIT LOGIN
   const handleSubmit = async (event) => {
     event.preventDefault()
     try {
       const userReturned = await loginService({username, password})
       console.log('usuario retornado: ', userReturned)
+      window.localStorage.setItem('loggedUser', JSON.stringify(userReturned))
       setUser(userReturned)
       setUsername('')
       setPassword('')
     } catch (error) {
       console.log({error: 'Usuario Incorrecto'})
     }
-
   }
+ 
 
   return (
     <>
@@ -58,7 +66,7 @@ const App = () => {
             </>
           : <div>
               <h2>blogs</h2>
-              <p>{user.username} logged in</p>
+              <p>{user.username} logged in <LogOutButton setUser={setUser}/></p>
               {blogs.map(blog =>
                 <Blog key={blog._id} blog={blog} />
               )}
@@ -66,42 +74,6 @@ const App = () => {
       }
     </>    
   )
-
-
-  // if(user)
-  //   return (
-  //     <div>
-  //       <h2>blogs</h2>
-  //       <p>{user.username} logged in</p>
-  //       {blogs.map(blog =>
-  //         <Blog key={blog.id} blog={blog} />
-  //       )}
-  //     </div>
-  //   )
-  // return (
-  //   <>
-  //     <h2>log in to application</h2>
-  //     <form onSubmit={handleSubmit}>
-  //       <div>
-  //         <input
-  //           type='text'
-  //           name='Username'
-  //           value={username}
-  //           onChange={({target})=>{setUsername(target.value)}}
-  //         />
-  //       </div>
-  //       <div>
-  //         <input
-  //           type='password'
-  //           name='Password'
-  //           value={password}
-  //           onChange={({target})=>{setPassword(target.value)}}
-  //         />
-  //       </div>
-  //       <button type='submit'>login</button>
-  //     </form>
-  //   </>
-  // )
   
 }
 
