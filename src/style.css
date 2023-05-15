@@ -1,0 +1,10 @@
+.info{
+  color: blue;
+  font-size: 1.5em;
+  float: right;
+}
+.error{
+  color: red;
+  font-size: 1.5em;
+  float: right;
+}

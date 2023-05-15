@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
+import MessageAlert from '../utils/MessageAlert'
 
 
-const LoginForm = ({setUser}) => {
+const LoginForm = ({setUser, setMessage}) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmitt = async (setUser) => {
+  const handleSubmitt = async () => {
     try {
       const userReturned = await loginService({username, password})
       console.log('usuario retornado: ', userReturned)
@@ -18,6 +19,13 @@ const LoginForm = ({setUser}) => {
       setPassword('')
     } catch (error) {
       console.log({error: 'Usuario Incorrecto'})
+      MessageAlert(
+        setMessage,
+        {
+          'type': 'error',
+          'message': 'Wrong user or password'
+        }
+      )
     }
   }
 
@@ -25,7 +33,7 @@ const LoginForm = ({setUser}) => {
   return(
     <form onSubmit={(event)=>{
       event.preventDefault()
-      handleSubmitt(setUser)
+      handleSubmitt()
     }}>
       <div>
         <input

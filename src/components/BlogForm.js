@@ -1,7 +1,8 @@
 import { useState } from "react"
 import blogService from '../services/blogs'
+import MessageAlert from "../utils/MessageAlert"
 
-const BlogForm = ({blogs, setBlogs}) => {
+const BlogForm = ({blogs, setBlogs, setMessage}) => {
 
   const [ title, setTitle ] = useState('')
   const [ url, setUrl ] = useState('')
@@ -14,12 +15,23 @@ const BlogForm = ({blogs, setBlogs}) => {
       'url': url,
       'likes': likes
     }
-    const blogReturned = await blogService.postBlog(blog)
-    console.log('Lista de blogs: ', blogs.concat(blogReturned))
-    setBlogs(blogs.concat(blogReturned))
-    setTitle('')
-    setUrl('')
-    setLikes('')
+    try {
+      const blogReturned = await blogService.postBlog(blog)
+      console.log('Lista de blogs: ', blogs.concat(blogReturned))
+      setBlogs(blogs.concat(blogReturned))
+      setTitle('')
+      setUrl('')
+      setLikes('')
+      MessageAlert(
+        setMessage,
+        {
+          'message': 'Blog posteado con exito!',
+          'type': 'info'
+        }
+      )
+    } catch (error) {
+      
+    }
   }
 
   return(
