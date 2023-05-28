@@ -1,16 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import LogOutButton from './components/LogOutButton'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import MessageAlert from './components/MessageAlert'
+import Toggable from './components/Toggable'
 import blogService from './services/blogs'
+import utilMessageAlert from './utils/MessageAlert'
 import './style.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [messageAlert, setMessageAlert] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -24,6 +28,26 @@ const App = () => {
       blogService.setNewToken(loggedUser.token)
     }
   }, [])
+
+  ///////// Crear nueva BLOG //////////////
+  const newBlog = async (blog) => {
+    try {
+      const blogReturned = await blogService.postBlog(blog)
+      console.log('Lista de blogs: ', blogs.concat(blogReturned))
+      setBlogs(blogs.concat(blogReturned))
+      blogFormRef.current.toggleVisibility()
+      utilMessageAlert(
+        setMessageAlert,
+        {
+          'message': 'Blog posteado con exito!',
+          'type': 'info'
+        }
+      )
+    } catch (error) {
+      console.log('Error desde newBlog: ', error)
+    }
+  }
+  ///////// Crear nueva Blog //////////////
 
   return (
     <>
@@ -40,11 +64,12 @@ const App = () => {
           : <div>
               <h2>blogs</h2>
               <p>{user.username} logged in <LogOutButton setUser={setUser}/></p>
-              <BlogForm 
-                blogs={blogs} 
-                setBlogs={setBlogs} 
-                setMessage={setMessageAlert}/>
-
+              <Toggable buttonLabel={'new note'} ref={blogFormRef}>
+                <BlogForm 
+                  newBlog={newBlog}
+                />
+              </Toggable>
+              <hr></hr>
               {blogs.map(blog =>
                 <Blog key={blog._id} blog={blog} />
               )}
