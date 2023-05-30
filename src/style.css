@@ -8,3 +8,7 @@
   font-size: 1.5em;
   float: right;
 }
+.blog{
+  border: 1px solid;
+  /* padding: 0.1em; */
+}
