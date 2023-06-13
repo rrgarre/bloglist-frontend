@@ -49,6 +49,23 @@ const App = () => {
   }
   ///////// Crear nueva Blog //////////////
 
+  ///////// Sumar LIKE //////////////
+  const newLike = async (blog) => {
+    try {
+      const id = blog._id
+      console.log('El blog ORIGEN en newLike: ', blog)
+      const blogUpLike = {...blog, likes:blog.likes+1}
+      console.log('El blog ACTUALIZADO en newLike: ', blogUpLike)
+      const blogReturned = await blogService.putBlog(blogUpLike)
+      console.log('El blog RETORNADO en newLike: ', blogReturned)
+      // Se sustituye el blog retornado en el estado de lista de blogs de la app
+      setBlogs(blogs.map(b => b._id===id ? blogReturned : b))
+    } catch (error) {
+      console.log('Error al añadir Like: ', error)
+    }
+  }
+  ///////// Sumar LIKE //////////////
+
   return (
     <>
       <MessageAlert notification={messageAlert}/>
@@ -71,7 +88,7 @@ const App = () => {
               </Toggable>
               <hr></hr>
               {blogs.map(blog =>
-                <Blog key={blog._id} blog={blog} />
+                <Blog key={blog._id} blog={blog} newLike={newLike} />
               )}
             </div>
       }

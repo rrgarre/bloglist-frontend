@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({blog}) => {
+const Blog = ({blog, newLike}) => {
 
   const [ visible, setVisible ] = useState(false)
   console.log('Contenido de blog: ', blog)
@@ -21,7 +21,7 @@ const Blog = ({blog}) => {
         visible && (
           <>
             <p>{blog.url}</p>
-            <p>likes {blog.likes} <button>like</button></p>
+            <p>likes {blog.likes} <button onClick={()=>{newLike(blog)}}>like</button></p>
             <p>{blog.author}</p>
           </>
         )
