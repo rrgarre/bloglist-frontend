@@ -16,10 +16,25 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+  // useEffect(() => {
+  //   blogService.getAll()
+  //     .then(blogs =>
+  //       setBlogs( blogs )
+  //     )  
+  // }, [])
+  useEffect(()=>{
+    blogService.getAll()
+      .then(respuesta => {
+        console.log('Lista en crudo: ', respuesta)
+        // respuesta.sort((a,b) => {
+        //   if(a.likes < b.likes)
+        //     return 1
+        //   if(a.likes > b.likes)
+        //     return -1  
+        //   return 0
+        // })
+        setBlogs(ordenarListaBlogs(respuesta))
+      })
   }, [])
   useEffect(()=>{
     if(window.localStorage.loggedUser){
@@ -29,12 +44,25 @@ const App = () => {
     }
   }, [])
 
+  ///////// Ordenar Lista de Blogs //////////////
+  const ordenarListaBlogs = (lista) => {
+    return lista.sort((a,b) => {
+      if(a.likes < b.likes)
+          return 1
+        if(a.likes > b.likes)
+          return -1  
+        return 0
+    })
+  }
+  ///////// Ordenar Lista de Blogs //////////////
+
   ///////// Crear nueva BLOG //////////////
   const newBlog = async (blog) => {
     try {
       const blogReturned = await blogService.postBlog(blog)
-      console.log('Lista de blogs: ', blogs.concat(blogReturned))
-      setBlogs(blogs.concat(blogReturned))
+      console.log('Lista de blogs: ', ordenarListaBlogs(blogs.concat(blogReturned)))
+      // setBlogs(blogs.concat(blogReturned))
+      setBlogs(ordenarListaBlogs(blogs.concat(blogReturned)))
       blogFormRef.current.toggleVisibility()
       utilMessageAlert(
         setMessageAlert,
@@ -59,7 +87,7 @@ const App = () => {
       const blogReturned = await blogService.putBlog(blogUpLike)
       console.log('El blog RETORNADO en newLike: ', blogReturned)
       // Se sustituye el blog retornado en el estado de lista de blogs de la app
-      setBlogs(blogs.map(b => b._id===id ? blogReturned : b))
+      setBlogs(ordenarListaBlogs(blogs.map(b => b._id===id ? blogReturned : b)))
     } catch (error) {
       console.log('Error al añadir Like: ', error)
     }
